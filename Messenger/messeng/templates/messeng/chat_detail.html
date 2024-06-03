@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ chat.name }}</title>
+</head>
+<body>
+    <h1>Chat: {{ chat.name }}</h1>
+    <ul>
+        {% for message in messages %}
+            <li><strong>{{ message.author }}:</strong> {{ message.content }} ({{ message.timestamp }})</li>
+        {% endfor %}
+    </ul>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send</button>
+    </form>
+    <a href="{% url 'chat_list' %}">Back to chats</a>
+</body>
+</html>
