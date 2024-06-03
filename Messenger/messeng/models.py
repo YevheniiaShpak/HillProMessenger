@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
@@ -21,8 +21,8 @@ class Message(models.Model):
 
     class Meta:
         permissions = [
-            ("edit_message", "Can edit message"),
-            ("delete_message", "Can delete message"),
+            ("can_edit_message", "Can edit message"),
+            ("can_remove_message", "Can remove message"),
         ]
 
     def __str__(self):
@@ -34,8 +34,8 @@ def set_message_permissions(sender, instance, created, **kwargs):
     if created:
         content_type = ContentType.objects.get_for_model(Message)
         permission_edit = Permission.objects.get(
-            codename='edit_message', content_type=content_type)
+            codename='can_edit_message', content_type=content_type)
         permission_delete = Permission.objects.get(
-            codename='delete_message', content_type=content_type)
+            codename='can_remove_message', content_type=content_type)
         instance.author.user_permissions.add(permission_edit)
         instance.author.user_permissions.add(permission_delete)
