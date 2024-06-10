@@ -18,13 +18,13 @@ from .forms import MessageForm
 
 class ChatListView(LoginRequiredMixin, ListView):
     model = Chat
-    template_name = 'messenger/chat_list.html'
+    template_name = 'messeng/chat_list.html'
     context_object_name = 'chats'
 
 
 class ChatDetailView(LoginRequiredMixin, UserInChatMixin, AddContextDataMixin, DetailView):
     model = Chat
-    template_name = 'messenger/chat_detail.html'
+    template_name = 'messeng/chat_detail.html'
     context_object_name = 'chat'
     extra_context = {'form': MessageForm()}
 
@@ -50,7 +50,7 @@ class ChatDetailView(LoginRequiredMixin, UserInChatMixin, AddContextDataMixin, D
 class MessageEditView(LoginRequiredMixin, UserIsAuthorMixin, FormHandleMixin, UpdateView):
     model = Message
     form_class = MessageForm
-    template_name = 'messenger/edit_message.html'
+    template_name = 'messeng/edit_message.html'
 
     def get_success_url(self):
         return reverse_lazy('chat_detail', kwargs={'pk': self.object.chat.id})
@@ -58,7 +58,7 @@ class MessageEditView(LoginRequiredMixin, UserIsAuthorMixin, FormHandleMixin, Up
 
 class MessageDeleteView(LoginRequiredMixin, UserIsAuthorMixin, DeleteView):
     model = Message
-    template_name = 'messenger/delete_message.html'
+    template_name = 'messeng/delete_message.html'
 
     def get_success_url(self):
         return reverse_lazy('chat_detail', kwargs={'pk': self.object.chat.id})
@@ -71,7 +71,7 @@ class ChatForm:
 class ChatCreateView(LoginRequiredMixin, SuperUserRequiredMixin, FormHandleMixin, CreateView):
     model = Chat
     form_class = ChatForm
-    template_name = 'messenger/create_chat.html'
+    template_name = 'messeng/create_chat.html'
     success_url = reverse_lazy('chat_list')
 
 
@@ -81,7 +81,7 @@ class UserAddForm:
 
 class AddUserToChatView(LoginRequiredMixin, SuperUserRequiredMixin, FormView):
     form_class = UserAddForm
-    template_name = 'messenger/add_user_to_chat.html'
+    template_name = 'messeng/add_user_to_chat.html'
 
     def form_valid(self, form):
         chat = get_object_or_404(Chat, pk=self.kwargs['pk'])
