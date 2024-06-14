@@ -13,7 +13,9 @@ from .mixins import (
     FormHandleMixin
 )
 from .forms import MessageForm
-
+from rest_framework import generics
+from .models import UserStatus
+from .serializers import UserStatusSerializer
 
 class ChatListView(LoginRequiredMixin, ListView):
     model = Chat
@@ -139,3 +141,9 @@ def delete_message(request, message_id):
     chat_id = message.chat.id
     message.delete()
     return redirect('chat_detail', chat_id=chat_id)
+
+
+class UserStatusDetail(generics.RetrieveAPIView):
+    queryset = UserStatus.objects.all()
+    serializer_class = UserStatusSerializer
+    lookup_field = 'user__username'

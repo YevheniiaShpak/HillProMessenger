@@ -19,9 +19,34 @@
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function checkUserStatus(username) {
+            fetch(`/api/status/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('user-status');
+                    if (data.is_online) {
+                        statusElement.textContent = 'Online';
+                    } else {
+                        statusElement.textContent = 'Offline';
+                    }
+                });
+        }
+        const username = '{{ chat.participants.exclude(username=request.user.username).first.username }}';
+
+        checkUserStatus(username);
+
+        setInterval(() => checkUserStatus(username), 5000);
+    });
+    </script>
+    <div>
+        <h2>Чат с {{ chat.participants.exclude(username=request.user.username).first.username }}</h2>
+        <p>Статус: <span id="user-status">Loading...</span></p>
+    </div>
 </body>
 </html>
