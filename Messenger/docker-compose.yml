@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  django_app:
+    build: .
+    command: bash -c "python manager.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./Messenger:/django_app/Messenger/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - psql_bd
+
+  psql_db:
+    image: postgres
+    environment:
+      POSTGRES_DB: db.sqlite3
+      POSTGRES_USER: demo_user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: gunicorn Messenger.wsgi:messenger_api --bind 0.0.0.0:8000
+    volumes:
+      - .:/django_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://demo_user:password@db:5432/db.sqlite3
+
+  celery:
+    build: .
+    command: celery -A Messenger worker --loglevel=info
+    volumes:
+      - .:/django_app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://demo_user:password@db:5432/db.sqlite3
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery-beat:
+    build: .
+    command: celery -A Messenger beat --loglevel=info
+    volumes:
+      - .:/django_app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://demo_user:password@db:5432/db.sqlite3
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  redis:
+    image: redis:6
+
+volumes:
+  postgres_data:

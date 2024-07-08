@@ -80,6 +80,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'USER': 'demo_user',
+        'PASSWORD': 'password',
+        'HOST': 'psql_db',
+        'PORT': ''
     }
 }
 
@@ -144,3 +148,13 @@ LOGGING = {
     },
 }
 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+CELERY_BEAT_SCHEDULE = {
+    'log_last_10_messages': {
+        'task': 'Messenger.tasks.log_last_10_messages',
+        'schedule': 300.0,
+    },
+}
