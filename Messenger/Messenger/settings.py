@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'messeng',
     'rest_framework',
     'messenger_api',
+    'celery',
 ]
 
 MIDDLEWARE = [
